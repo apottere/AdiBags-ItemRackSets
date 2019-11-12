@@ -1,0 +1,5 @@
+package-as: AdiBags_ItemRack
+
+required-dependencies:
+  - adibags
+  - itemrack

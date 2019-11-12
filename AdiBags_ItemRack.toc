@@ -1,0 +1,11 @@
+## Interface: 80200
+
+## Title: AdiBags - ItemRack support
+## Notes: Adds ItemRack set filters to AdiBags.
+## Author: apottere
+## Version: @project-version@
+## X-Date: @project-date-iso@
+
+## Dependencies: AdiBags, ItemRack
+
+AdiBags_ItemRack.lua
