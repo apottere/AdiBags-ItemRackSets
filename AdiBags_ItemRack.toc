@@ -1,6 +1,6 @@
 ## Interface: 11302
 
-## Title: AdiBags - ItemRack support
+## Title: AdiBags_ItemRack
 ## Notes: Adds ItemRack set filters to AdiBags.
 ## Author: apottere
 ## Version: @project-version@
