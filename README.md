@@ -1,2 +1,2 @@
 # AdiBags_ItemRack
-ItemRack filters for AdiBags.
+ItemRack filters for AdiBags
