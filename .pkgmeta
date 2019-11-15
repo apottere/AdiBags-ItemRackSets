@@ -1,4 +1,4 @@
-package-as: AdiBags - ItemRackSets
+package-as: AdiBags-ItemRackSets
 
 required-dependencies:
   - adibags
