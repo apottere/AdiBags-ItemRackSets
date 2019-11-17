@@ -1,36 +1,31 @@
---[[
-AdiBags_ItemRack - Adds ItemRack set filters to AdiBags.
---]]
-
 local _, ns = ...
 
 local addon = LibStub('AceAddon-3.0'):GetAddon('AdiBags')
 local L = setmetatable({}, {__index = addon.L})
 
--- The filter itself
--- Use a priority slightly higher than the Gear Manager filter one
-local setFilter = addon:RegisterFilter("ItemRackSets", 92, 'ABEvent-1.0')
-setFilter.uiName = L['ItemRack item sets']
-setFilter.uiDesc = L['Put items belonging to one or more sets of ItemRack in specific sections.']
+local filter = addon:RegisterFilter("ItemRackSets", 100, 'ABEvent-1.0')
+filter.uiName = L['ItemRack item sets']
+filter.uiDesc = L['Put items belonging to one or more sets of ItemRack in specific sections.']
 
 local function sendFiltersChanged()
-	setFilter:SendMessage('AdiBags_FiltersChanged')
+	filter:SendMessage('AdiBags_FiltersChanged')
 end
 
-
-local timer = nil
-local oldSaveSet = nil
-local oldDeleteSet = nil
+local enabled = false
+local nonce = 1
 local frame = CreateFrame("Frame", nil)
 frame:RegisterEvent("PLAYER_EQUIPMENT_CHANGED")
 frame:SetScript("OnEvent", function(self, event, ...)
-	if timer ~= nil then
-		timer:Cancel()
-	end
-		
-	timer = C_Timer.NewTimer(0.5, function(...)
-		timer = nil
-		sendFiltersChanged()
+    if not enabled then
+        return
+    end
+
+    nonce = nonce + 1
+    local currentNonce = nonce
+	C_Timer.After(0.5, function(...)
+        if enabled and currentNonce == nonce then
+            sendFiltersChanged()
+        end
 	end)
 end)
 
@@ -40,20 +35,27 @@ end
 ItemRack:RegisterExternalEventListener("ITEMRACK_SET_SAVED", itemRackUpdated)
 ItemRack:RegisterExternalEventListener("ITEMRACK_SET_DELETED", itemRackUpdated)
 
-function setFilter:OnInitialize()
-	self.db = addon.db:RegisterNamespace('ItemRackSets', {})
-
+function filter:OnInitialize()
 end
 
-function setFilter:OnEnable()
+function filter:GetFilterOptions()
+end
+
+function filter:OnEnable()
+    enabled = true
 	addon:UpdateFilters()
 end
 
-function setFilter:OnDisable()
+function filter:OnDisable()
+    enabled = false
 	addon:UpdateFilters()
 end
 
-function setFilter:Filter(data)
+function filter:Filter(data)
+    if not enabled then
+        return
+    end
+
 	local bag = data["bag"]
 	local slot = data["slot"]
 	local id = ItemRack.GetID(bag, slot)
@@ -75,10 +77,7 @@ function setFilter:Filter(data)
 	end
 end
 
-function setFilter:GetFilterOptions()
-end
-
-function setFilter:findSetsForItem(searchId)
+function filter:findSetsForItem(searchId)
 	local sets = {}
 	
 	for name, set in pairs(ItemRackUser.Sets) do
