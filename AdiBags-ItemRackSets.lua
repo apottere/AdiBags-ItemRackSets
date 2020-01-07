@@ -36,9 +36,20 @@ ItemRack:RegisterExternalEventListener("ITEMRACK_SET_SAVED", itemRackUpdated)
 ItemRack:RegisterExternalEventListener("ITEMRACK_SET_DELETED", itemRackUpdated)
 
 function filter:OnInitialize()
+    self.db = addon.db:RegisterNamespace('ItemRackSets', {
+        profile = { singleGroup = false },
+    })
 end
 
-function filter:GetFilterOptions()
+function filter:GetOptions()
+	return {
+		singleGroup = {
+			name = L['Show as single group'],
+			desc = L['Show all ItemRack items in a single group instead of by set name.'],
+			type = 'toggle',
+			order = 10,
+		}
+    }, addon:GetOptionHandler(self)
 end
 
 function filter:OnEnable()
@@ -60,16 +71,24 @@ function filter:Filter(data)
 	local slot = data["slot"]
 	local id = ItemRack.GetID(bag, slot)
 	local sets = self:findSetsForItem(id)
+
+    if self.db.profile.singleGroup then
+        for _, set in ipairs(sets) do
+            return L["ItemRack"], L["Equipment"]
+        end
+
+        return nil
+    end
 	
 	local label = nil
 	local fmt = "Set: %s"
 	for _, set in ipairs(sets) do
-		if label == nil then
-			label = set
-		else
-			fmt = "Sets: %s"
-			label = label .. ", " .. set
-		end
+        if label == nil then
+            label = set
+        else
+            fmt = "Sets: %s"
+            label = label .. ", " .. set
+        end
 	end
 	
 	if label ~= nil then
