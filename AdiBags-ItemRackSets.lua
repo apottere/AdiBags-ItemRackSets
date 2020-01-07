@@ -49,7 +49,7 @@ function filter:GetOptions()
 			type = 'toggle',
 			order = 10,
 		}
-    }, addon:GetOptionHandler(self)
+    }, addon:GetOptionHandler(self, true)
 end
 
 function filter:OnEnable()
