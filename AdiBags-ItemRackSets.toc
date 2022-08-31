@@ -1,4 +1,4 @@
-## Interface: 11302
+## Interface: 30400
 
 ## Title: AdiBags - ItemRackSets
 ## Notes: Adds ItemRack set filters to AdiBags.
